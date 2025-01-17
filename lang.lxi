@@ -1,0 +1,78 @@
+%{
+#include y.tab.h
+%}
+
+%option noyywrap
+
+% Regular Expressions 
+DIGIT      [0-9]
+LETTER     [a-zA-Z]
+IDENTIFIER ({LETTER}_)+({LETTER}{DIGIT}_)
+INTEGER    [+-]{DIGIT}+
+FLOAT      {INTEGER}.{DIGIT}
+STRING     [^]
+CHAR       '[^']'
+BOOL       truefalse
+
+%%
+
+# Keywords
+int       { return INT; }
+string    { return STRING; }
+bool      { return BOOL; }
+char      { return CHAR; }
+float     { return FLOAT; }
+void      { return VOID; }
+if        { return IF; }
+else      { return ELSE; }
+while     { return WHILE; }
+for       { return FOR; }
+return    { return RETURN; }
+print     { return PRINT; }
+input     { return INPUT; }
+class     { return CLASS; }
+
+# Operators
++         { return PLUS; }
+-         { return MINUS; }
+         { return TIMES; }
+         { return DIVIDE; }
+%         { return MODULO; }
+=         { return ASSIGN; }
+         { return LT; }
+=        { return LE; }
+         { return GT; }
+=        { return GE; }
+==        { return EQ; }
+!=        { return NE; }
+
+# Separators
+{         { return LBRACE; }
+}         { return RBRACE; }
+(         { return LPAREN; }
+)         { return RPAREN; }
+         { return COLON; }
+,         { return COMMA; }
+.         { return DOT; }
+-        { return ARROW; }
+;         { return SEMICOLON; }
+[         { return LBRACKET; }
+]         { return RBRACKET; }
+
+# Identifiers and Constants
+{IDENTIFIER} { yylval.sval = strdup(yytext); return IDENTIFIER; }
+{INTEGER}    { yylval.ival = atoi(yytext); return INTEGER; }
+{FLOAT}      { yylval.fval = atof(yytext); return FLOAT; }
+{STRING}     { yylval.sval = strdup(yytext); return STRING; }
+{CHAR}       { yylval.cval = yytext[1]; return CHAR; }
+{BOOL}       { yylval.bval = strcmp(yytext, true) == 0; return BOOL; }
+
+# Comments and Whitespace
+#.        {  Ignore comments  }
+[ tn]+     {  Ignore whitespace  }
+
+.            { printf(Unknown token %sn, yytext); }
+
+%%
+
+int yywrap() { return 1; }

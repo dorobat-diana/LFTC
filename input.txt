@@ -1,0 +1,8 @@
+ int n;
+ n=010;
+ int i;
+ for i in range(0,n){
+ n=n-1;
+ }
+ print("Bye");
+ 
